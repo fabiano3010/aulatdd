@@ -13,6 +13,7 @@ use Leilao\dao\LeilaoDao;
 use Leilao\dao\LeilaoFakeDao;
 use Leilao\dominio\Leilao;
 use Leilao\servico\EncerradorLeilao;
+use PHPUnit\Framework\MockObject\RuntimeException;
 use PHPUnit\Framework\TestCase;
 
 class EncerradorLeilaoTest extends TestCase
@@ -41,9 +42,14 @@ class EncerradorLeilaoTest extends TestCase
         $encerradorLeilao = new EncerradorLeilao( $leilaoDao ) ;
         $qtdeEncerrados = $encerradorLeilao->encerraCriadosMais7Dias() ;
 
+        $leilaoDao->method( 'atualiza' )->willThrowException(
+            new RuntimeException( 'atualiza falhou' )
+        ) ;
+
         //$leilaoDao->expects( $this->exactly(1) )->method('atualiza')  ;
         $this->assertEquals( 1  ,$qtdeEncerrados ) ;
-        $leilaoDao->expects( $this->once())->method( 'atualiza' ) ;
+        //$leilaoDao->expects( $this->once())->method( 'atualiza' ) ;
+        $leilaoDao->expects( $this->never())->method( 'atualiza' ) ;
     }
 
     /*public function testaNenhumLeilaoEncerrado()

@@ -41,7 +41,12 @@ class EncerradorLeilao
         foreach ( $leiloes as $leilao ) {
             if( $leilao->getDataCriacao() < $seteDias ) {
                 $leilao->encerra() ;
-                $this->leilaoDao->atualiza( $leilao ) ;
+
+                try {
+                    $this->leilaoDao->atualiza( $leilao ) ;
+                }catch ( \RuntimeException $runtimeException ) {
+                    $runtimeException->getMessage() ;
+                }
 
                 $qtdeEncerrados++ ;
             }
